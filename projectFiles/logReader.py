@@ -24,6 +24,7 @@ class Reader:
         returnData = reader.country(ip)
         return returnData.country.name
 
+    # This functio will parse the log files, returning the ips and the corresponding location
     def ip_parser(self):
         file = open("auth.log")
         file = file.readlines()
