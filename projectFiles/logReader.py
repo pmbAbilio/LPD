@@ -17,6 +17,7 @@ class Reader:
 
         return -1
 
+    # Function that will get the country of origin of the ip
     def getCountry(self, ip):
         reader = geoip2.database.Reader("./GeoLite2-Country.mmdb")
 
