@@ -19,14 +19,15 @@ class Reader:
 
     # Function that will get the country of origin of the ip
     def getCountry(self, ip):
-        reader = geoip2.database.Reader("./GeoLite2-Country.mmdb")
+        reader = geoip2.database.Reader("projectFiles/GeoLite2-Country.mmdb")
 
         returnData = reader.country(ip)
         return returnData.country.name
 
     # This functio will parse the log files, returning the ips and the corresponding location
+
     def ip_parser(self):
-        file = open("auth.log")
+        file = open("projectFiles/auth.log")
         file = file.readlines()
         ips = []
         dates = []
