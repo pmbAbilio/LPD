@@ -1,17 +1,23 @@
 import sqlite3
 
 
-class DatabaseHandles:
-    conn = sqlite3.connect("hashPC.db")
+class DatabaseHandler:
+    def __init__(self):
+        self.connection = sqlite3.connect("Connection_attempts.db")
 
     def createDatabase(self):
-        sqlQuery = """CREATE TABLE IF NOT EXISTS hash (
+        print("Creating Table Attampts")
+        sqlQuery = """CREATE TABLE IF NOT EXISTS Attempts (
                     id integer PRIMARY KEY AUTOINCREMENT,
-                    nome not null,
-                    path unique not null,
-                    os text not null,
-                    hash_md5 text not null,
-                    hash_sha1 text not null
+                    IP text unique not null,
+                    Time text not null,
+                    Location text not null
                 )"""
-        conn.execute(sqlQuery)
+        self.connection.execute(sqlQuery)
 
+    def insertData(self, data):
+        print("Hello world")
+
+
+dbh = DatabaseHandler()
+dbh.createDatabase()
