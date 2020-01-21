@@ -8,6 +8,8 @@ import numpy as np
 class Reader:
     def __init__(self):
         self.dbh = DatabaseHandler()
+        self.authLogFile = "../logFiles/auth.log"
+        self.ufwLogFile = "../logFiles/ufw.log"
 
     def find_str(self, s, char):
         index = 0
@@ -33,34 +35,35 @@ class Reader:
             print("An exception occured")
 
     def logTypeSelector(self):
-
-        LogType = input(
-            "What kind of log do you want to parse ?\n 1 - SSH \n 2 - UFW \n"
-        )
-
-        if LogType == 1:
-            filePath = raw_input(
-                "File path(This must be the absolute filepath in order to work properly):"
-            )
-            try:
-                self.sshParser(filePath)
-            except:
-                print("We Couldn't find the file you specified!")
-                self.logTypeSelector()
-        elif LogType == 2:
-            print("Some stuff is hardcoded")
-        else:
-            self.logTypeSelector()
+        self.sshParser()
+        self.ufwParser()
 
     def ufwParser(self):
-        file = open("../logFiles/auth.log")
+        file = open(self.ufwLogFile)
         file = file.readlines()
+        for line in file:
+            if ("UFW BLOCK" in line) and ("DPT" in line):
+                IpsFound = re.findall(r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b", line)
+
+                self.dbh.insertData(
+                    [
+                        line[0:16],
+                        IpsFound[0],
+                        self.getCountry(IpsFound[0]),
+                        "Blocked Connection Attempt on PORT: {}".format(
+                            line[
+                                line.find("DPT=")
+                                + len("DPT=") : line.find("DPT=")
+                                + len("DPT=")
+                                + 10
+                            ].split(" ")[0]
+                        ),
+                    ]
+                )
 
     # This function will parse the SSH log file, returning the ips and the corresponding location
-    def sshParser(self, filepath):
-        print(filepath)
-        # file = open("../logFiles/auth.log")
-        file = open(filepath)
+    def sshParser(self):
+        file = open(self.authLogFile)
         file = file.readlines()
         ips = []
         for line in file:
